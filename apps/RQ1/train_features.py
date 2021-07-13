@@ -8,14 +8,11 @@ import argparse
 import torch
 import torch.nn as nn
 
-from RNNRepair.utils import get_project_root,create_args
+from RNNRepair.utils import get_project_path,create_args
 if __name__ == "__main__":
     args = create_args().parse_args()
 
-    model_type= args.model 
-    
-    save_dir= get_project_root()
-    save_dir = os.path.join(save_dir, model_type)
+    save_dir = get_project_path(args.path, args.model )
     
     if args.model == 'keras_lstm_mnist':
         class_num = 10

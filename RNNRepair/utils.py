@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import argparse
 import joblib
 
+import tensorflow as tf 
+
 import torch.nn.functional as F
 import torch
 
@@ -78,10 +80,20 @@ def calculate_similarity_list(tr1, tr2_list, components, label=10):
     with torch.no_grad():
         return F.l1_loss(tr1, tr2, reduction="none").mean([-1, -2]).numpy()
 
-def get_project_root():
+def get_project_root(path=None):
     """Returns project root folder."""
     # return Path(__file__).parent
-    return os.path.join(os.path.dirname(__file__),"..","save")
+    if path is None:
+        return os.path.join(os.path.dirname(__file__),"..","save")
+    return path
+
+def get_project_path(path=None,model_type=None):
+    """Returns project root folder."""
+    if model_type is None :
+        raise Exception("unknown model_type,",type(model_type))
+    
+    save_dir = get_project_root(path=path)
+    return os.path.join(save_dir,model_type)
 
 toxic_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'toxic_data','data_list')
 sst_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'sst_data','data_list')

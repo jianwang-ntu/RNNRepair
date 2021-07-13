@@ -89,6 +89,8 @@ def plot_picture(dt_frame_list, subplot_handle=None):
 
 import sys
 
+here_dir = os.path.dirname(__file__)
+
 ast_file, acc_file = sys.argv[1], sys.argv[2]
 tl = "" if len(sys.argv) <= 3 else sys.argv[3].strip()
 ast_file, acc_file = ast_file.strip(), acc_file.strip()
@@ -134,6 +136,8 @@ plt.legend(loc='upper right')
 if tl:
     plt.title(tl)
 save_fig_path = "_".join(get_savefn(ast_file) + get_savefn(acc_file)) + ".pdf"
+save_fig_path = os.path.join(here_dir,save_fig_path)
+
 print(save_fig_path)
 fg.savefig(save_fig_path, bbox_inches='tight')
 # plt.savefig(save_fig_path)

@@ -1,26 +1,28 @@
 
 import sys
-sys.path.append("../../")
+# sys.path.append("../../")
 import joblib
 import numpy as np
-from utils import get_project_root
 import os
 import argparse
 import torch
 import torch.nn as nn
+
+from RNNRepair.utils import create_args,get_project_path
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
-    parser.add_argument('-pca', default=10, type=int)
-    parser.add_argument('-epoch', default=30, type=int)
+    # parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    # parser.add_argument('-pca', default=10, type=int)
+    # parser.add_argument('-epoch', default=30, type=int)
+    #
+    # parser.add_argument('-components', default=37, type=int)
+    # parser.add_argument('-path')
+    #
+    # parser.add_argument('-model', default='torch_gru_toxic',
+                        # choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin', 'torch_gru_sst', ])
+    args = create_args().parse_args()
 
-    parser.add_argument('-components', default=37, type=int)
-    parser.add_argument('-path')
-
-    parser.add_argument('-model', default='torch_gru_toxic',
-                        choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin', 'torch_gru_sst', ])
-    args = parser.parse_args()
-
-    save_dir = os.path.join(get_project_root() if args.path is None else args.path, 'data', args.model)
+    save_dir = get_project_path(args.path, args.model )
 
     if args.model == 'keras_lstm_mnist' or args.model == 'keras_gru_mnist':
         class_num = 10

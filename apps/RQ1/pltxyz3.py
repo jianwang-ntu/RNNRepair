@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import functools
 import numpy as np
+import os 
 
-
+here_dir = os.path.dirname(__file__)
 
 from matplotlib import  rcParams
 
@@ -52,7 +53,7 @@ plt.xticks(dim)
 plt.ylabel('percentage')
 plt.xlabel('top-k')
 plt.legend(loc='lower right')
-fg.savefig("metric1.pdf", bbox_inches='tight')
+fg.savefig(os.path.join(here_dir,"metric1.pdf"), bbox_inches='tight')
 
 
 ##########
@@ -73,7 +74,7 @@ plt.xlabel("top-k")
 plt.xticks(dim)
 
 plt.legend(loc='upper right')
-fg.savefig("metric2.pdf", bbox_inches='tight')
+fg.savefig(os.path.join(here_dir,"metric2.pdf"), bbox_inches='tight')
 
 ##########
 ##
@@ -91,5 +92,5 @@ plt.ylabel('avg_dis')
 plt.xlabel('top-k')
 plt.xticks(dim)
 plt.legend(loc='upper right')
-fg.savefig("metric3.pdf", bbox_inches='tight')
-
+fg.savefig(os.path.join(here_dir,"metric3.pdf"), bbox_inches='tight')
+print ("finish")

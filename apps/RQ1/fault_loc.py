@@ -1,14 +1,14 @@
 
 import sys
-sys.path.append("../../")
 import joblib
 import numpy as np
-from utils import get_project_root
-
-from utils import calculate_similarity_list, calculate_jcard_list
 import os
 import argparse
 import torch
+
+from RNNRepair.utils import create_args,get_project_path
+from RNNRepair.utils import calculate_similarity_list, calculate_jcard_list
+
 def inference(trace, trans_train_without, pred_results, pred, truth):
     abst_states = trace[:, 0].astype(int)  # self.gmm.predict(trace)
 
@@ -39,21 +39,17 @@ def inference(trace, trans_train_without, pred_results, pred, truth):
 
     return total_seq
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
-    parser.add_argument('-pca', default=10, type=int)
-    parser.add_argument('-epoch', default=30, type=int)
-    parser.add_argument('-components', default=25, type=int)
+    parser = create_args()
     parser.add_argument('-benign', default=0, type=int)
-    parser.add_argument('-model', default='torch_gru_toxic',
-                        choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin', 'torch_gru_sst', ])
-    parser.add_argument('-path')
     args = parser.parse_args()
+    
     if args.model == 'keras_lstm_mnist' or args.model == 'keras_gru_mnist':
         class_num = 10
     else:
         class_num =2
     # save_dir = os.path.join(get_project_root(), 'data', args.model)
-    save_dir = os.path.join(get_project_root() if args.path is None else args.path, 'data', args.model)
+    save_dir = get_project_path(args.path,args.model) 
+    
     abst_dir = os.path.join(save_dir, 'abs_model')
     model_path = os.path.join(abst_dir, str(args.pca) + '_' + str(args.epoch) + '_' + str(args.components) + '_GMM.ast')
     gan_train = os.path.join(save_dir, 'feature_data',
