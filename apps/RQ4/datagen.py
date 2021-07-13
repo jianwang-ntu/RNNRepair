@@ -4,11 +4,16 @@ import numpy as np
 
 
 import sys
-sys.path.append("../../")
-from utils import create_args, get_project_root
+# sys.path.append("../../")
 import  torch
-from utils import save_image, get_traces,calculate_similarity_list
+
+from RNNRepair.use_cases import create_classifer
+
+from RNNRepair.utils import create_args, get_project_path
+from RNNRepair.utils import save_image, get_traces,calculate_similarity_list
 from RNNRepair.abstraction.feature_extraction import extract_feature
+from RNNRepair.use_cases.image_classification.mutators import Mutators
+
 import joblib
 
 
@@ -40,7 +45,6 @@ def compute_best_img(imgs, classifier, pca, best_model, pred_img_trace):
 
 
 def data_gen(imgs, pred_trace, classifier, pca, best_model, label):
-    from use_cases.image_classification.mutators import Mutators
 
     rotate_img = list(range(-180, 180))
     trans_img = list(range(-3, 3))
@@ -69,44 +73,23 @@ def data_gen(imgs, pred_trace, classifier, pca, best_model, label):
 
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
-    parser.add_argument('-pca', default=10, type=int)
-    parser.add_argument('-epoch', default=15, type=int)
-    parser.add_argument('-path')
-    parser.add_argument('-components', default=43, type=int)
-
-    parser.add_argument('-model', default='keras_lstm_mnist',
-                        choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin', 'torch_gru_sst', ])
-    args = parser.parse_args()
+    # import argparse
+    #
+    # parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    # parser.add_argument('-pca', default=10, type=int)
+    # parser.add_argument('-epoch', default=15, type=int)
+    # parser.add_argument('-path')
+    # parser.add_argument('-components', default=43, type=int)
+    #
+    # parser.add_argument('-model', default='keras_lstm_mnist',
+                        # choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin', 'torch_gru_sst', ])
+    # args = parser.parse_args()
+    args = create_args().parse_args()
 
     save_dir = os.path.join(args.path, 'data', args.model)
 
-    if args.model == 'keras_lstm_mnist':
-        from use_cases.image_classification.mnist_rnn_profile import MnistClassifier
 
-        classifier = MnistClassifier(rnn_type='lstm', save_dir=save_dir, epoch=args.epoch)
-    elif args.model == 'torch_gru_imdb':
-        from use_cases.sentiment_analysis.imdb_rnn_profile import IMDBClassifier
-
-        classifier = IMDBClassifier(rnn_type='gru', save_dir=save_dir, epoch=args.epoch)
-    elif args.model == 'torch_gru_toxic':
-        from use_cases.sentiment_analysis.toxic_rnn_profile import TOXICClassifier
-
-        classifier = TOXICClassifier(rnn_type='gru', save_dir=save_dir, epoch=args.epoch)
-    elif args.model == 'torch_gru_sst':
-        from use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
-
-        classifier = SSTClassifier(rnn_type='gru', save_dir=save_dir, epoch=args.epoch)
-
-    elif args.model == 'torch_lstm_bin':
-        from use_cases.image_classification.mnist_rnn_binary import TorchMnistiClassifier
-
-        classifier = TorchMnistiClassifier(rnn_type='lstm', save_dir=save_dir, epoch=args.epoch,
-                                           flip=0, first=4, second=9, ratio=0.3)
-    else:
-        assert (False)
+    classifier = create_classifer(model_type=args.model,epoch=args.epoch) 
 
     K = 1
     #set it for generating the common failed inputs
@@ -131,7 +114,7 @@ if __name__ == "__main__":
         indexes = np.ones(len(y_test), dtype=bool)
         if args.model == 'keras_lstm_mnist' or args.model == 'keras_gru_mnist':
             for m in pca_models:
-                m = classifier.model_type+'_'+str(m)+'.h5'
+                m = classifier.rnn_type+'_'+str(m)+'.h5'
                 print(m)
                 model = classifier.create_model()
                 model.load_weights(os.path.join(classifier.model_dir, m))
@@ -155,7 +138,7 @@ if __name__ == "__main__":
 
     save_dir = classifier.save_dir
 
-    from use_cases.image_classification.mnist_rnn_profile import MnistClassifier
+    from RNNRepair.use_cases.image_classification.mnist_rnn_profile import MnistClassifier
 
     retrain_id = failed_test_indexes
     retrain_img = []
@@ -174,7 +157,7 @@ if __name__ == "__main__":
 
 
 
-    model_type = classifier.model_type
+    rnn_type = classifier.rnn_type
     retrain_name = tempfiles+'/retrain'+'_'.join(str(x) for x in pca_models)+'.npz'
     for m in pca_models:
         m_path = tempfiles+'/remul_'+str(m)+'.job'
@@ -186,14 +169,16 @@ if __name__ == "__main__":
 
             m_best_imgs = []
             m_best_labels = []
-            classifier = MnistClassifier(rnn_type=model_type, save_dir=save_dir, epoch=m)
+            classifier = MnistClassifier(rnn_type=rnn_type, save_dir=save_dir, epoch=m)
 
             pca, pca_data, softmax, pred_seq_labels, pred_labels, train_labels = classifier.get_pca_traces(args.pca,
                                                                                                            m)
             test_pca_data, test_softmax, test_seq_labels, test_pred_labels, test_truth_labels = classifier.get_test_pca_traces(
                 pca, args.pca, m)
             train_pred_results = pred_labels
-            save_dir = os.path.join(get_project_root(), 'data', args.model)
+            # save_dir = os.path.join(get_project_root(), 'data', args.model)
+            save_dir = get_project_path(args.path,args.model)
+
             abst_dir = os.path.join(save_dir, 'abs_model')
             model_path = os.path.join(abst_dir,
                                       str(args.pca) + '_' + str(args.epoch) + '_' + str(args.components) + '_GMM.ast')

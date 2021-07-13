@@ -6,9 +6,9 @@ import joblib
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
-sys.path.append("../../")
-from use_cases.image_classification import MyNet
-from use_cases.image_classification.mnist_rnn_binary import RNN
+# sys.path.append("../../")
+from RNNRepair.use_cases.image_classification import MyNet
+from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN
 from sgd_train import sgd_train
 import time
 torch.backends.cudnn.deterministic = True
@@ -86,7 +86,9 @@ def infl_sgd(output_path, target_epoch, flip_file ,test_file, id_ , seed=0 ):
     torch.manual_seed(seed)
     model = RNN(n_inputs, hidden_size, num_layers, n_classes, model_type).to(device)
     criterion = nn.BCELoss()
-    fn = '%s/epoch%02d_final_model.dat' % (output_path, target_epoch)
+    fn =\
+                      '%s/epoch%02d_final_model.dat' % (output_path, target_epoch)
+
     model.load_state_dict(torch.load(fn))
     model.to(device)
     # model.eval()
@@ -102,14 +104,17 @@ def infl_sgd(output_path, target_epoch, flip_file ,test_file, id_ , seed=0 ):
     infl = torch.zeros(ntr, target_epoch, requires_grad=False).to(device)
     with torch.backends.cudnn.flags(enabled=False):
         for epoch in range(target_epoch, 0, -1):
-            fn = '%s/epoch%02d_info.dat' % (output_path, epoch)
+            fn =\
+                  '%s/epoch%02d_info.dat' % (output_path, epoch)
             info = joblib.load(fn)
             T = len(info)
             B = [bundle_size] * 3
             B.append(T % (bundle_size * 3))
             c = -1
             for k in range(3, -1, -1):
-                fn = '%s/epoch%02d_bundled_models%02d.dat' % (output_path, epoch, k)
+                fn = \
+                          '%s/epoch%02d_bundled_models%02d.dat' % (output_path, epoch, k)
+
                 models.load_state_dict(torch.load(fn))
                 for t in range(B[k]-1, -1, -1):
                     m = models.models[t].to(device)
@@ -146,7 +151,8 @@ def infl_sgd(output_path, target_epoch, flip_file ,test_file, id_ , seed=0 ):
             print("finish {}/{} epoch:{}".format(epoch,target_epoch,time.time()-start_time))
             start_time = time.time()
             # save
-            fn = '%s/infl_sgd_at_epoch%02d_%02d.dat' % (output_path, target_epoch,id_)
+            fn = \
+                  '%s/infl_sgd_at_epoch%02d_%02d.dat' % (output_path, target_epoch,id_)
             joblib.dump(infl.cpu().numpy(), fn, compress=9)
             if epoch > 1:
                 infl[:, epoch-2] = infl[:, epoch-1].clone()
@@ -173,7 +179,7 @@ def infl_icml(output_path, target_epoch, alpha, flip_file ,test_file, id_,seed):
     torch.manual_seed(seed)
     model = RNN(n_inputs, hidden_size, num_layers, n_classes, model_type).to(device)
     criterion = nn.BCELoss()
-    fn = '%s/epoch%02d_final_model.dat' % (output_path, target_epoch)
+    fn ='%s/epoch%02d_final_model.dat' % (output_path, target_epoch)
     model.load_state_dict(torch.load(fn))
     model.to(device)
     model.train()
@@ -224,7 +230,8 @@ def infl_icml(output_path, target_epoch, alpha, flip_file ,test_file, id_,seed):
             print("finish {}/{} epoch:{}".format(epoch,target_epoch,time.time()-start_time))
             start_time = time.time()
     # save
-    fn = '%s/loss_icml_at_epoch%02d_%02d.dat' % (output_path, target_epoch,id_)
+    fn =\
+                      '%s/loss_icml_at_epoch%02d_%02d.dat' % (output_path, target_epoch,id_)
     joblib.dump(np.array(loss_train), fn, compress=9)
     
     # influence
@@ -246,38 +253,82 @@ def infl_icml(output_path, target_epoch, alpha, flip_file ,test_file, id_,seed):
         
     # save
     fn = '%s/infl_icml_at_epoch%02d_%02d.dat' % (output_path, target_epoch, id_)
+
     joblib.dump(infl, fn, compress=9)
     print(">>>Total time:{}".format(time.time()-origin_time))
 
 
 if __name__ == '__main__':
-    # infl_sgd(output_path, target_epoch, flip_file ,test_file, id_ , seed=0, )
-    target = sys.argv[1]
-    infl_type = sys.argv[2]
-    target_epoch = int(sys.argv[3])
-    start_seed = int(sys.argv[4])
-    end_seed = int(sys.argv[5])
-    id_ = int(sys.argv[6])
-    flip = int(sys.argv[7])
-    ratio = float(sys.argv[8])
-    first = int(sys.argv[9])
-    second = int(sys.argv[10])
+    import argparse
+    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    parser.add_argument('-save_dir', default="./save", type=str)
 
+    parser.add_argument('-target', default="sst_gru_sgd", type = str)
+    parser.add_argument('-infl_type', default="icml", type = str)
+    parser.add_argument('-target_epoch', default=1, type = int)
+    parser.add_argument('-id', default=1, type = int)
+
+    parser.add_argument('-start_seed', default=1000, type=int)
+    parser.add_argument('-end_seed', default=1010, type=int)
+    parser.add_argument('-flip', default=1, type = int)
+    parser.add_argument('-ratio', default=0.3, type=float)
+
+    parser.add_argument('-first', default=1, type = int)
+    parser.add_argument('-second', default=1, type = int)
+
+    args=parser.parse_args()
+    save_dir = args.save_dir 
+
+    target = args.target
+    infl_type = args.infl_type
+    target_epoch = args.target_epoch
+    id_ = int(args.id)
+    ratio = float(args.ratio)
+    first = int(args.first)
+    second = int(args.second)
+    start_seed = int(args.start_seed)
+    end_seed = int(args.end_seed)
+    flip = int(args.flip)
+
+
+    
+    # infl_sgd(output_path, target_epoch, flip_file ,test_file, id_ , seed=0, )
+    # target = sys.argv[1]
+    # infl_type = sys.argv[2]
+    # target_epoch = int(sys.argv[3])
+    # id_ = int(sys.argv[6])
+
+    # ratio = float(sys.argv[8])
+    # first = int(sys.argv[9])
+    # second = int(sys.argv[10])
+    # start_seed = int(sys.argv[4])
+    # end_seed = int(sys.argv[5])
+    # flip = int(sys.argv[7])
     assert infl_type in ['sgd', 'icml']
 
+    os.makedirs(os.path.join(save_dir,
+                     "./{}_{}_{}_{}_{:.1f}/".format(target,first,second,flip,ratio,
+        )), exist_ok=True )
     seeds = np.arange(start_seed,end_seed)
-    time_log = open("./{}_{}_{}_{}_{:.1f}/{}_time_{}_{}.log".format(target,first,second,flip,ratio,
-        infl_type,start_seed,end_seed),"w+")
+    time_log = open(
+        os.path.join(save_dir,
+                     "./{}_{}_{}_{}_{:.1f}/{}_time_{}_{}.log".format(target,first,second,flip,ratio,
+        infl_type,start_seed,end_seed)
+                     ),"w+")
     start_time = origin_time = time.time()
     for cur_seed in seeds:
-        test_file = "./dataflip_{}_{}_{}/target_test_{}_{}_{}_{}_{}.npy".format(
+        test_file =os.path.join(save_dir, "./dataflip_{}_{}_{}/target_test_{}_{}_{}_{}_{}.npy".format(
             first,second,ratio,first,second,flip,ratio,cur_seed)
+            )
         assert os.path.exists(test_file),test_file
-        flip_file = "./dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
+        flip_file =os.path.join(save_dir, "./dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
             first,second,ratio,cur_seed,flip,first,second,flip)
+            )
         assert os.path.exists(flip_file),flip_file
 
-        output_path = './%s_%d_%d_%d_%.1f/%s_%02d' % (target,first,second,flip,ratio,target,cur_seed)
+        output_path =os.path.join(save_dir,
+           './%s_%d_%d_%d_%.1f/%s_%02d' % (target,first,second,flip,ratio,target,cur_seed)
+           )
         if infl_type == 'sgd':
             infl_sgd(output_path, target_epoch, flip_file, test_file, id_, cur_seed)
         elif infl_type == 'icml':

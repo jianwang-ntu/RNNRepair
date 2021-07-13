@@ -11,11 +11,12 @@ class AbstConstructor():
         self.rnn_type = model_type
         self.dataset = dataset
 
-        self.save_dir = os.path.join(get_project_root() if self.path is None else self.path, 'data', self.rnn_type)
+        # self.save_dir = os.path.join(get_project_root() if self.path is None else self.path, 'data', self.rnn_type)
+        self.save_dir = os.path.join(get_project_root() if self.path is None else self.path,  self.rnn_type)
 
         self.classifier = create_classifer(
             self.rnn_type,
-            save_dir=self.save_dir, epoch=self.epoch)
+            save_dir=get_project_root(), epoch=self.epoch)
         # if self.rnn_type == 'keras_lstm_mnist':
             # from use_cases.image_classification.mnist_rnn_profile import MnistClassifier
             # self.classifier = MnistClassifier(rnn_type='lstm', save_dir=self.save_dir, epoch=self.epoch)

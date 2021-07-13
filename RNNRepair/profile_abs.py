@@ -76,7 +76,11 @@ class Profiling(object):
             return joblib.load(k_path)
         else:
             pred_labels, seq_labels, softmax, con_tr, truth_labels = self.get_con_trace(k, epoch, test=True)
+            # x_pca_data = pca.do_reduction(con_tr)
+            from RNNRepair.abstraction.reduction import PCA_R
+            pca = PCA_R(k)
             x_pca_data = pca.do_reduction(con_tr)
+
             joblib.dump((x_pca_data, softmax, seq_labels, pred_labels, truth_labels), k_path)
         return x_pca_data, softmax, seq_labels, pred_labels, truth_labels
 

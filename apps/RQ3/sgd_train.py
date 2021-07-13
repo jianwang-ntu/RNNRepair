@@ -7,10 +7,13 @@ import torch.nn as nn
 from torchvision import transforms
 import keras 
 import time
-sys.path.append("../../")
+# sys.path.append("../../")
+import argparse
+
 import torch.nn.functional as F
-from use_cases.image_classification.mnist_rnn_binary import RNN
-from use_cases.image_classification import MyNet
+
+from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN
+from RNNRepair.use_cases.image_classification import MyNet
 
 
 torch.backends.cudnn.deterministic = True
@@ -40,13 +43,17 @@ target = "mnist_rnn_sgd"
 
 def sgd_train(flip,ratio,first,second,seed,target,device):
     torch.manual_seed(seed)
-    output_path = './%s_%d_%d_%d_%.1f/%s_%02d' % (target,first,second,flip,ratio,target,seed)
+    output_path = os.path.join(save_dir,
+                               './%s_%d_%d_%d_%.1f/%s_%02d' % (target,first,second,flip,ratio,target,seed)
+                               )
+    
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     else:
         assert False,"please check the existed folder:{}".format(output_path)
-    fn = "./dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
-        first,second,ratio,seed,flip,first,second,flip)
+    fn =os.path.join(save_dir, "./dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
+        first,second,ratio,seed,flip,first,second,flip) )
+
     assert os.path.exists(fn),fn
     print("[load] load existed flip data:",fn)
     (x_train, y_train), (x_test, y_test), flip_idx = joblib.load(fn)
@@ -91,7 +98,9 @@ def sgd_train(flip,ratio,first,second,seed,target,device):
             info.append({'idx':idx, 'lr':lr, 'seeds':seeds})
             c += 1
             if c == bundle_size or i == len(idx_list) - 1:
-                fn = '%s/epoch%02d_bundled_models%02d.dat' % (output_path, epoch, k)
+                fn =\
+                                  '%s/epoch%02d_bundled_models%02d.dat' % (output_path, epoch, k)
+
                 models = MyNet.NetList(list_of_models)
                 torch.save(models.state_dict(), fn)
                 k += 1
@@ -119,11 +128,15 @@ def sgd_train(flip,ratio,first,second,seed,target,device):
                     .format(epoch, num_epochs, 0, num_steps, total, train_loss/num_steps, train_acc))
             # Test the model one batch
 
-        fn = '%s/epoch%02d_final_model.dat' % (output_path, epoch)
+        fn =\
+                  '%s/epoch%02d_final_model.dat' % (output_path, epoch)
         torch.save(model.state_dict(), fn)
-        fn = '%s/epoch%02d_final_optimizer.dat' % (output_path, epoch)
+        fn = \
+              '%s/epoch%02d_final_optimizer.dat' % (output_path, epoch)
         torch.save(optimizer.state_dict(), fn)
-        fn = '%s/epoch%02d_info.dat' % (output_path, epoch)
+        fn = \
+              '%s/epoch%02d_info.dat' % (output_path, epoch)
+
         joblib.dump(info, fn, compress=9)
 
         # evaluation
@@ -146,7 +159,9 @@ def sgd_train(flip,ratio,first,second,seed,target,device):
 
     print(">>>total time:{}".format(time.time()-origin_time))
     # save
-    fn = '%s/score.dat' % (output_path)
+    fn =\
+          '%s/score.dat' % (output_path)
+
     joblib.dump(np.array(score), fn, compress=9)
 
 # args
@@ -154,12 +169,33 @@ def sgd_train(flip,ratio,first,second,seed,target,device):
 # CUDA_VISIBLE_DEVICES=1 python sgd_train.py 1 2 2 0.3 1 7
 
 if __name__=="__main__":
-    start_seed = int(sys.argv[1])
-    end_seed = int(sys.argv[2])
-    flip = int(sys.argv[3])
-    ratio = float(sys.argv[4])
-    first = int(sys.argv[5])
-    second = int(sys.argv[6])
+
+    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    parser.add_argument('-save_dir', default="./save", type=str)
+
+    parser.add_argument('-start_seed', default=1000, type=int)
+    parser.add_argument('-end_seed', default=1010, type=int)
+    parser.add_argument('-flip', default=1, type = int)
+    parser.add_argument('-ratio', default=0.3, type=float)
+
+    parser.add_argument('-first', default=1, type = int)
+    parser.add_argument('-second', default=1, type = int)
+
+    args=parser.parse_args()
+    save_dir = args.save_dir 
+    # start_seed = int(sys.argv[1])
+    # end_seed = int(sys.argv[2])
+    # flip = int(sys.argv[3])
+    # ratio = float(sys.argv[4])
+    # first = int(sys.argv[5])
+    # second = int(sys.argv[6])
+
+    start_seed = int(args.start_seed)
+    end_seed = int(args.end_seed)
+    flip = int(args.flip)
+    ratio = float(args.ratio)
+    first = int(args.first)
+    second = int(args.second)
 
     seeds = np.arange(start_seed,end_seed)
     for seed in seeds:

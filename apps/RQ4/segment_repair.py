@@ -1,21 +1,23 @@
 
+import  time
 import sys
-sys.path.append("../../")
+# sys.path.append("../../")
 import joblib
 import numpy as np
 import copy
-from utils import get_project_root
-
-from utils import calculate_similarity_list, calculate_jcard_list
 import os
 import argparse
 import torch
-from RNNRepair.abstraction.build_abstract import AbstConstructor
 import random
 
+from RNNRepair.utils import create_args,get_project_path,get_project_root
+from RNNRepair.utils import calculate_similarity_list, calculate_jcard_list
+from RNNRepair.abstraction.build_abstract import AbstConstructor
 from RNNRepair.abstraction.feature_extraction import extract_feature
 
-import  time
+from RNNRepair.use_cases.sentiment_analysis.toxic_rnn_profile import TOXICClassifier
+from RNNRepair.use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
+from RNNRepair.use_cases.sentiment_analysis.imdb_rnn_profile import IMDBClassifier
 
 
 def encode(trace, emd, start, end):
@@ -273,17 +275,20 @@ def repair(current_model, pca, epoch, components, x_test, x_test_pred, x_test_tr
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
-    parser.add_argument('-pca', default=10, type=int)
-    parser.add_argument('-epoch', default=2, type=int)
-    parser.add_argument('-components', default=22, type=int)
+    parser= create_args()
+    # parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    # parser.add_argument('-pca', default=10, type=int)
+    # parser.add_argument('-epoch', default=2, type=int)
+    # parser.add_argument('-components', default=22, type=int)
     parser.add_argument('-benign', default=0, type=int)
     parser.add_argument('-rd', default=1, type=int)
     parser.add_argument('-rand', default=10, type=int)
-    parser.add_argument('-model', default='torch_lstm_imdb',
-                        choices=['keras_lstm_mnist', 'torch_lstm_imdb', 'torch_gru_toxic', 'torch_lstm_bin' , 'torch_gru_sst', ])
-    parser.add_argument('-path', default='./data')
+    # parser.add_argument('-model', default='torch_lstm_imdb',
+                        # choices=['keras_lstm_mnist', 'torch_lstm_imdb', 'torch_gru_toxic', 'torch_lstm_bin' , 'torch_gru_sst', ])
+    # parser.add_argument('-path', default='./data')
     args = parser.parse_args()
+    
+    save_dir = get_project_root()
 
     first_abst = AbstConstructor(args.pca,args.epoch,args.components,args.path,args.model)
     if args.model == 'keras_lstm_mnist' or args.model == 'keras_gru_mnist':
@@ -301,10 +306,14 @@ if __name__ == "__main__":
         x_train = joblib.load(os.path.join(texts_path, 'train.texts'))
         x_train_emd = joblib.load(os.path.join(texts_path, 'train.texts.embedd'))
 
+    print ("get_pca_traces","......"*8)
     _, pca_data, softmax, pred_seq_labels, train_pred_labels, train_truth_labels = first_abst.classifier.get_pca_traces(args.pca,
                                                                                                    args.epoch)
+    print ("get_test_pca_traces","......"*8)
     test_pca_data, test_softmax, test_seq_labels, test_pred_labels, test_truth_labels = first_abst.classifier.get_test_pca_traces(
         args.pca, args.pca, args.epoch)
+    
+    print ("extract_feature","......"*8)
     train_trace, test_trace = extract_feature(first_abst.ast_model, first_abst.classifier, args.pca, args.epoch, pca_data, pred_seq_labels,
                                               test_pca_data, test_seq_labels, gmm=args.components)
 
@@ -339,9 +348,6 @@ if __name__ == "__main__":
     rand_times = int(args.rand)
 
 
-    from use_cases.sentiment_analysis.toxic_rnn_profile import TOXICClassifier
-    from use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
-    from use_cases.sentiment_analysis.imdb_rnn_profile import IMDBClassifier
     if args.model =="torch_gru_toxic":
         
         _DynamicClassifier = TOXICClassifier
@@ -361,6 +367,9 @@ if __name__ == "__main__":
         raise Exception("not support now")
 
     
+    tmp_save_dir= os.path.join(save_dir,"tmp")
+    os.makedirs(tmp_save_dir, exist_ok=True)
+    
     # for sen_num in [5, 15, 25, 35, 45, 80, 100]:
     for sen_num in _DynamicList:
 
@@ -372,10 +381,11 @@ if __name__ == "__main__":
                                       failed_test_truth, failed_text_emd, failed_trace, temp_train, train_trace, sen_num, True)
 
             import time 
-            np.savez(f"/tmp/123_{time.time()}.npz",target_test)
+            np.savez(f"{tmp_save_dir}/123_{time.time()}.npz",target_test)
             
-            
-            classifier = _DynamicClassifier(rnn_type='gru', train_default=False, save_dir=None, epoch=args.epoch)
+            save_dir =get_project_path(args.path,args.model)
+
+            classifier = _DynamicClassifier(rnn_type='gru', train_default=False, save_dir=save_dir, epoch=args.epoch)
             # print ("====="*20)
             # print (type(target_test))
             # print ("len",len(target_test))
