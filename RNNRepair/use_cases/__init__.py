@@ -2,9 +2,18 @@
 __all__=["create_classifer"]
 import os 
 from os.path import join as path_join 
+# from .. import utils
+def _get_project_root():
+    """Returns project root folder."""
+    # return Path(__file__).parent
+    return os.path.join(os.path.dirname(__file__),"../..","save")
 
 def create_classifer(model_type,*args,**kwargs):
-    assert "save_dir" in kwargs 
+    # assert "save_dir" in kwargs 
+    save_dir = kwargs.get("save_dir",_get_project_root())
+    save_dir = os.path.join(save_dir, model_type)
+    kwargs["save_dir"]=save_dir
+    
     assert "epoch" in kwargs 
     here_dir = os.path.dirname(__file__)
     dataset_default_dir=path_join(here_dir,"../../data/")
@@ -13,7 +22,7 @@ def create_classifer(model_type,*args,**kwargs):
     if model_type == 'keras_lstm_mnist':
         from .image_classification.mnist_rnn_profile import MnistClassifier
         classifier = MnistClassifier(rnn_type='lstm', *args,**kwargs,)
-    elif model_type == 'torch_lstm_bin':
+    elif model_type == 'torch_lstm_bin' or model_type == 'torch_lstm_mnist':
         from .image_classification.mnist_rnn_binary import TorchMnistiClassifier
         classifier = TorchMnistiClassifier(rnn_type='lstm', *args,**kwargs,
                                            flip=0, first=4, second=9, ratio=0.3)

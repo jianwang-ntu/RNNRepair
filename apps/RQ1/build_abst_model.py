@@ -12,22 +12,11 @@ from RNNRepair.abstraction.feature_extraction import extract_feature
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
-    parser.add_argument('-pca', default=10, type=int)
-    parser.add_argument('-epoch', default=30, type=int)
-    parser.add_argument('-start', default=1, type=int)
-    parser.add_argument('-end', default=80, type=int)
-    parser.add_argument('-path')
-
-    parser.add_argument('-model', default='torch_lstm_bin',
-                        choices=['keras_lstm_mnist', 'torch_gru_imdb', 'torch_gru_toxic', 'torch_lstm_bin',
-                                 "torch_gru_sst",
-                                 
-                                 ])
+    parser  = create_args()
     args = parser.parse_args()
 
 
-    save_dir = os.path.join(args.path, 'data', args.model)
+    # save_dir = os.path.join(args.path,  args.model)
 
 
 
@@ -37,7 +26,7 @@ if __name__ == "__main__":
     plot_file = open(log_path, 'a+')
 
 
-    plot_file.write("index,bic,avg,max,min,time\n")#columns
+    # plot_file.write("index,bic,avg,max,min,time\n")#columns
     print('Start to build abstract models')
 
     for i in range(args.start, args.end, 3):

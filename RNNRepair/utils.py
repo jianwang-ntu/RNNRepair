@@ -1,6 +1,6 @@
 import os, numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
+# from pathlib import Path
 import argparse
 import joblib
 
@@ -10,7 +10,7 @@ import torch
 import torch.utils.data
 device =torch.device("cuda" if torch.cuda.is_available() else "cpu" )
 
-from . import reproducible
+# from . import reproducible
 
 
 def get_traces(imgs, classifier, pca, best_model):
@@ -78,9 +78,10 @@ def calculate_similarity_list(tr1, tr2_list, components, label=10):
     with torch.no_grad():
         return F.l1_loss(tr1, tr2, reduction="none").mean([-1, -2]).numpy()
 
-def get_project_root() -> Path:
+def get_project_root():
     """Returns project root folder."""
-    return Path(__file__).parent
+    # return Path(__file__).parent
+    return os.path.join(os.path.dirname(__file__),"..","save")
 
 toxic_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'toxic_data','data_list')
 sst_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'sst_data','data_list')
@@ -140,26 +141,25 @@ def save_text_cr(save_dir, data, name):
 
 
 def create_args():
-
-
-
     parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
     parser.add_argument('-pca', default=10, type=int)
     parser.add_argument('-epoch', default=30, type=int)
     parser.add_argument('-start', default=20, type=int)
     parser.add_argument('-end', default=60, type=int)
     parser.add_argument('-components', default=7, type=int)
-    parser.add_argument('-path')
+    parser.add_argument('-path',default=None,)
 
     parser.add_argument('-model', default='torch_lstm_mnist',
-                        choices=['keras_lstm_mnist', 'keras_gru_mnist',  'torch_lstm_imdb','torch_lstm_mnist',
-                                 'torch_gru_mnist',
-                                 'torch_gru_imdb', 'torch_lstm_toxic', 'torch_gru_toxic'])
-    args = parser.parse_args()
-
-    save_dir = os.path.join(get_project_root() if args.path is None else args.path, 'data', args.model)
-
-    raise Exception("model load")
+                        choices=['keras_lstm_mnist', 'keras_gru_mnist','torch_lstm_mnist','torch_gru_mnist',
+                                 'torch_lstm_imdb','torch_gru_imdb', 
+                                 'torch_lstm_toxic', 'torch_gru_toxic',
+                                 'torch_lstm_sst', 'torch_gru_sst',
+                                 ])
+    # args = parser.parse_args()
+    #
+    # save_dir = os.path.join(get_project_root() if args.path is None else args.path, 'data', args.model)
+    #
+    # raise Exception("model load")
     # if args.model == 'keras_lstm_mnist':
         # from use_cases.image_classification.mnist_rnn_profile import MnistClassifier
         # classifier = MnistClassifier(rnn_type='lstm', save_dir=save_dir, epoch=args.epoch)
@@ -174,7 +174,7 @@ def create_args():
         # classifier = TorchMnistiClassifier(rnn_type='gru', save_dir=save_dir, epoch=args.epoch)
     # else:
         # assert (False)
-    return args, classifier
+    return parser # args, classifier
 
 #
 #
