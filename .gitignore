@@ -1,0 +1,17 @@
+data/imdb_data
+data/toxic_data
+data/sst_data
+.DS_Store
+.project
+.ptp-sync/
+.ptp-sync-folder
+.pydevproject
+.settings/
+RNNRepair.egg-info/
+*pyc
+*npy
+*lst
+*npz
+*pth
+*h5
+
