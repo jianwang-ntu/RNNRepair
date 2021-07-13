@@ -20,17 +20,17 @@ def create_classifer(model_type,*args,**kwargs):
 
     
     elif model_type == 'torch_gru_imdb':
-        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"imdb_data"))
+        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"imdb_data/data_list"))
         from .sentiment_analysis.imdb_rnn_profile import IMDBClassifier
         classifier = IMDBClassifier(rnn_type='gru',dataset_path=dataset_path, *args,**kwargs,)
 
     elif model_type == 'torch_gru_toxic':
-        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"toxic_data"))
+        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"toxic_data/data_list"))
         from .sentiment_analysis.toxic_rnn_profile import TOXICClassifier
         classifier = TOXICClassifier(rnn_type='gru',dataset_path=dataset_path, *args,**kwargs,)
 
     elif model_type == 'torch_gru_sst':
-        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"sst_data"))
+        dataset_path=kwargs.get("dataset_path",path_join(dataset_default_dir,"sst_data/data_list"))
         from .sentiment_analysis.sst_rnn_profile import SSTClassifier
         classifier = SSTClassifier(rnn_type='gru',dataset_path=dataset_path, *args,**kwargs,)
     

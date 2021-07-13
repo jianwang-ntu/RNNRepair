@@ -22,5 +22,9 @@ def declare_reproducible(SEED = 123):
         torch.backends.cudnn.benchmark = False
     except :
         pass 
-
+    
+    try :
+        tf.set_random_seed(1234)
+    except :
+        pass 
 declare_reproducible()

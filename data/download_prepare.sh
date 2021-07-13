@@ -23,11 +23,12 @@ echo "process toxic"
 #'''
 data=jigsaw-toxic-comment-classification-challenge.zip
 
-curl    --output toxic_data/$data -O "https://raw.githubusercontent.com/alm0st907/ursotoxic/master/jigsaw-toxic-comment-classification-challenge.zip"
-unzip -o  toxic_data/$data -d toxic_data/
+mkdir -p toxic_data/data/
+curl    --output toxic_data/data/$data -O "https://raw.githubusercontent.com/alm0st907/ursotoxic/master/jigsaw-toxic-comment-classification-challenge.zip"
+unzip -o  toxic_data/data/$data -d toxic_data/data/
 #unzip -o  toxic_data/test.csv.zip -d toxic_data/
 #unzip -o toxic_data/train.csv.zip -d toxic_data/
-rm -fr toxic_data/$data
+rm -fr toxic_data/data/$data
 
 
 echo "process imdb"
@@ -36,10 +37,10 @@ echo "process imdb"
 #''' https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
 #'''
 
-data=aclImdb_v1.tar.gz
-curl    --output imdb_data/$data -O https://ai.stanford.edu/~amaas/data/sentiment/$data
-tar -xf  imdb_data/$data -C imdb_data/
-rm -f imdb_data/$data
+#data=aclImdb_v1.tar.gz
+#curl    --output imdb_data/$data -O https://ai.stanford.edu/~amaas/data/sentiment/$data
+#tar -xf  imdb_data/$data -C imdb_data/
+#rm -f imdb_data/$data
 
 
 

@@ -14,3 +14,7 @@ cytoolz
 spacy
 pandas
 seaborn
+
+
+pytreebank
+nltk

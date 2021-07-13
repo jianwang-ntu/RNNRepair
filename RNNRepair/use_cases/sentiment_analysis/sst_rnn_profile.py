@@ -34,8 +34,8 @@ use_large = True
 g_nlp_token="glove.840B.300d" if use_large else "glove.6B.100d"
 g_nlp_dim=300  if use_large else 100
 
-torch.backends.cudnn.deterinistic = True
-torch.backends.cudnn.benchmark= False
+# torch.backends.cudnn.deterinistic = True
+# torch.backends.cudnn.benchmark= False
 
 class SSTClassifier(Profiling):
     def __init__(self, rnn_type, save_dir, epoch = 40, train_default = True, dataset_path = None, seed = 0):
