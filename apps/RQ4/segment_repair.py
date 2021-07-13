@@ -409,7 +409,7 @@ if __name__ == "__main__":
                                              failed_test_pred,
                                              failed_test_truth, failed_text_emd, failed_trace, temp_train, train_trace,
                                              sen_num, False)
-        classifier = _DynamicClassifier(rnn_type='gru', train_default=False, save_dir=None, epoch=args.epoch)
+        classifier = _DynamicClassifier(rnn_type='gru', train_default=False, save_dir=save_dir, epoch=args.epoch)
         new_model = classifier.train(dataset=(new_train, target_test))
         pred_labels, _, _, _, truth_labels = classifier.eval_test(new_model, target_test)
         acc1 = np.sum(pred_labels == truth_labels) / len(pred_labels)

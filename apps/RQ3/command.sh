@@ -26,7 +26,7 @@ python apps/RQ3/sgd_infl.py -target mnist_rnn_sgd -infl_type sgd  -target_epoch 
 python apps/RQ3/sgd_infl.py -target mnist_rnn_sgd -infl_type icml  -target_epoch $epoch  -start_seed $start_seed  -end_seed $end_seed -id $save_id -flip $flip_mode -ratio $ratio -first $flipfirst -second $flipsecond
 
 # >>>> 4. retrain
-#python apps/RQ3/retrain.py -epoch $epoch -flipfirst $flipfirst -flipsecond $flipsecond -flip $flip_mode -ratio $ratio -start_seed $start_seed -end_seed $end_seed
+python apps/RQ3/retrain.py -epoch $epoch -flipfirst $flipfirst -flipsecond $flipsecond -flip $flip_mode -ratio $ratio -start_seed $start_seed -end_seed $end_seed
 
 # >>>> 5. plot results
-#python apps/RQ3/plot_results.py $flipfirst $flipsecond $flip_mode $ratio $epoch $start_seed $end_seed
+python apps/RQ3/plot_results.py $flipfirst $flipsecond $flip_mode $ratio $epoch $start_seed $end_seed

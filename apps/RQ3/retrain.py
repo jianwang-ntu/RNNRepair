@@ -1,16 +1,22 @@
 import sys
-sys.path.append("../../")
+# sys.path.append("../../")
 from keras.datasets import mnist
 import numpy as np
 import os
 import joblib
 import torch
-from use_cases.image_classification.mnist_rnn_binary import RNN,TorchMnistiClassifier
 from collections import defaultdict
+
+from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN,TorchMnistiClassifier
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-import argparse
+
+
 if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    parser.add_argument('-save_dir', default="./save/", type=str)
+    
     parser.add_argument('-epoch', default=30, type=int)
     parser.add_argument('-flipfirst', default=1, type=int)
     parser.add_argument('-flipsecond', default=7, type=int)
@@ -20,6 +26,8 @@ if __name__ == "__main__":
     parser.add_argument('-end_seed', default=1010, type=int)
     
     args = parser.parse_args()
+    save_dir =args.save_dir 
+    
 
     epoch= args.epoch
     flipfirst = args.flipfirst
@@ -31,7 +39,9 @@ if __name__ == "__main__":
 
     seeds = np.arange(start_seed,end_seed)
     path = "dataflip_{}_{}_{}".format(flipfirst,flipsecond,ratio)
-
+    path = os.path.join(save_dir,path)
+    
+    
     parts = 10
     size = 1/parts
     all_test_results = defaultdict()
@@ -42,7 +52,7 @@ if __name__ == "__main__":
 
     log = open("{}/retrain_{}_{}_{}_{}.log".format(path,flipfirst,flipsecond,flip_mode,ratio),"w+")
     for cur_seed in seeds:
-        flip_save_dir = os.path.join(path, 'torch_lstm_bin', str(cur_seed)+'_'+str(flip_mode))
+        flip_save_dir = os.path.join(save_dir, 'torch_lstm_bin', str(cur_seed)+'_'+str(flip_mode))
         classifier = TorchMnistiClassifier(rnn_type='lstm', save_dir=flip_save_dir, train_default=False, 
                                         epoch=epoch, seed=cur_seed, flip=flip_mode, first=flipfirst,second=flipsecond, ratio = ratio)
 
@@ -52,12 +62,20 @@ if __name__ == "__main__":
         
         print("[load]cur_seed:{}\t\tflipidx:{}\t\tinfl_flip_idx:{}\t\ttarget_test:{}".format(cur_seed,len(flip_idx),len(real_flip_idx),len(target_test_idx)))
 
-        sgd_order = joblib.load("./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_sgd_at_epoch{}_00.dat".format(
-            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))[:,-1]
-        icml_order = joblib.load("./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_icml_at_epoch{}_00.dat".format(
-            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))
-        jcard_order = np.load("./dataflip_{}_{}_{}/jcard_order_{}_{}_{}_{}_{}.npy".format(
+        sgd_order = joblib.load(os.path.join(save_dir,
+                     "./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_sgd_at_epoch{}_00.dat".format(
+            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch)
+                     )
+                     )[:,-1]
+        icml_order = joblib.load(os.path.join(save_dir,
+                      "./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_icml_at_epoch{}_00.dat".format(
+            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch)
+                      )
+                      )
+        jcard_order = np.load(os.path.join(save_dir,
+                       "./dataflip_{}_{}_{}/jcard_order_{}_{}_{}_{}_{}.npy".format(
             flipfirst,flipsecond,ratio,flipfirst,flipsecond,flip_mode,ratio,cur_seed))
+                       )
         
         all_results[cur_seed] = defaultdict()
         all_results[cur_seed]['sgd'] = np.argsort(sgd_order)
