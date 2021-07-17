@@ -7,10 +7,10 @@ import sys
 # sys.path.append("../../")
 import  torch
 
-from RNNRepair.use_cases import create_classifer
-
 from RNNRepair.utils import create_args, get_project_path
 from RNNRepair.utils import save_image, get_traces,calculate_similarity_list
+
+from RNNRepair.use_cases import create_classifer
 from RNNRepair.abstraction.feature_extraction import extract_feature
 from RNNRepair.use_cases.image_classification.mutators import Mutators
 

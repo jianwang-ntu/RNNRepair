@@ -10,6 +10,8 @@ import torch.nn as nn
 
 from RNNRepair.utils import create_args,get_project_path
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 if __name__ == "__main__":
     # parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
     # parser.add_argument('-pca', default=10, type=int)
@@ -29,7 +31,6 @@ if __name__ == "__main__":
     else:
         class_num =2
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     pca_dir = os.path.join(save_dir, 'pca_trace')
     k = args.pca
     epoch = args.epoch

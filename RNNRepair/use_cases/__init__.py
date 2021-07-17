@@ -20,10 +20,10 @@ def create_classifer(model_type,*args,**kwargs):
     
     classifier = None 
     if model_type == 'keras_lstm_mnist':
-        from .image_classification.mnist_rnn_profile import MnistClassifier
+        from .image_classification.mnist_rnn_profile_keras import MnistClassifier
         classifier = MnistClassifier(rnn_type='lstm', *args,**kwargs,)
     elif model_type == 'torch_lstm_bin' or model_type == 'torch_lstm_mnist':
-        from .image_classification.mnist_rnn_binary import TorchMnistiClassifier
+        from .image_classification.mnist_rnn_profile_torch import TorchMnistiClassifier
         classifier = TorchMnistiClassifier(rnn_type='lstm', *args,**kwargs,
                                            flip=0, first=4, second=9, ratio=0.3)
 

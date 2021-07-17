@@ -9,6 +9,9 @@ import torch
 import torch.nn as nn
 
 from RNNRepair.utils import get_project_path,create_args
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 if __name__ == "__main__":
     args = create_args().parse_args()
 
@@ -19,7 +22,6 @@ if __name__ == "__main__":
     else:
         class_num =2
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     pca_dir = os.path.join(save_dir, 'pca_trace')
     k = args.pca
     epoch = args.epoch

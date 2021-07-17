@@ -77,8 +77,8 @@ class Profiling(object):
         else:
             pred_labels, seq_labels, softmax, con_tr, truth_labels = self.get_con_trace(k, epoch, test=True)
             # x_pca_data = pca.do_reduction(con_tr)
-            from RNNRepair.abstraction.reduction import PCA_R
-            pca = PCA_R(k)
+            # from RNNRepair.abstraction.reduction import PCA_R
+            # pca = PCA_R(k)
             x_pca_data = pca.do_reduction(con_tr)
 
             joblib.dump((x_pca_data, softmax, seq_labels, pred_labels, truth_labels), k_path)
@@ -98,10 +98,10 @@ class Profiling(object):
             print('Cannot find the PCA traces, we will conduct the PCA reduction')
             final_labels, seq_labels, softmax, con_tr, truth_labels = self.get_con_trace(k, epoch, test=False)
 
-
             from RNNRepair.abstraction.reduction import PCA_R
             pca = PCA_R(k)
             pca_data, min_val, max_val = pca.create_pca(con_tr)
+
             joblib.dump(pca, pca_path)
             joblib.dump((pca_data, softmax, seq_labels, final_labels, truth_labels), k_path)
         return pca, pca_data, softmax, seq_labels, final_labels, truth_labels
@@ -116,3 +116,8 @@ class Profiling(object):
             con_tr = self.do_profile(test)
             joblib.dump(con_tr, con_path)
         return con_tr
+    
+    # def cal_pca_trace(self, pca, x_test, texts = True):
+        # pred_labels, seq_labels, softmax, con_tr, truth_labels, texts, texts_emd  = self.eval_test(self.model, x_test, save_text=None, save_name = '', need_loss = False, need_texts=texts)
+        # x_pca_data = pca.do_reduction(con_tr)
+        # return x_pca_data, softmax, seq_labels, pred_labels, truth_labels, texts, texts_emd
