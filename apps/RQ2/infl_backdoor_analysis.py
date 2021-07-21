@@ -133,8 +133,8 @@ if __name__ == "__main__":
     
         # print ("ori_test...",type(ori_test),dir(ori_test))
         # print (ori_test)
-        test_ori, y_ori = classifier.eval_test(model, ori_test)
-        test_argued, y_argued = classifier.eval_test(model, aug_test,save_text=True, save_name='argtest.texts')
+        test_ori, _, _, _, y_ori = classifier.eval_test(model, ori_test)
+        test_argued, _, _, _, y_argued = classifier.eval_test(model, aug_test,save_text=True, save_name='argtest.texts')
         print('Ori acc', np.sum(test_ori == y_ori)/ len(test_ori), len(test_ori))
         print('Backdoor test acc', np.sum(test_argued == y_argued) / len(test_argued), len(test_argued))
         # Finish get backdoor model
@@ -264,8 +264,8 @@ if __name__ == "__main__":
         select_data = np.array(attack_selected)
         other_data = np.array(other_selected)
     
-        pred_test, truth_test = classifier.eval_test(classifier.model, select_data)
-        pred_other, truth_other= classifier.eval_test(classifier.model, other_data)
+        pred_test, _, _, _, truth_test = classifier.eval_test(classifier.model, select_data)
+        pred_other, _, _, _, truth_other= classifier.eval_test(classifier.model, other_data)
 
         infl_acc = np.sum(pred_test != truth_test) / len(truth_test), len(truth_test)
         rdm_acc = np.sum(pred_other != truth_other) / len(truth_other), len(truth_other)
@@ -307,14 +307,14 @@ if __name__ == "__main__":
 
                 new_test = np.array([data])
                 model = classifier2.train(dataset=(train_inference, new_test))
-                pred_test, truth_test = classifier2.eval_test(classifier.model, new_test)
+                pred_test, _, _, _, truth_test = classifier2.eval_test(classifier.model, new_test)
                 inf_correct = truth_test[0] == pred_test[0]
                 fixed += inf_correct
                 infl_re.append(inf_correct)
 
                 # print('Start Train Non-Inference')
                 model2 = classifier2.train(dataset=(train_others, new_test))
-                pred_other, truth_other = classifier2.eval_test(classifier2.model, new_test)
+                pred_other,  _, _, _,truth_other = classifier2.eval_test(classifier2.model, new_test)
                 other_correct = pred_other[0] == truth_other[0]
                 rmd_fixed += other_correct
                 rdm_re.append(other_correct)
