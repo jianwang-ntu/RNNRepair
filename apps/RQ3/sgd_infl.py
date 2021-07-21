@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torchvision import transforms
 # sys.path.append("../../")
 from RNNRepair.use_cases.image_classification import MyNet
-from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_torch import RNN
 from sgd_train import sgd_train
 import time
 torch.backends.cudnn.deterministic = True

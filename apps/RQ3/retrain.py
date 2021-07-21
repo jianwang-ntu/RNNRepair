@@ -7,7 +7,7 @@ import joblib
 import torch
 from collections import defaultdict
 
-from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN,TorchMnistiClassifier
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_torch import RNN,TorchMnistiClassifier
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

@@ -12,7 +12,7 @@ import argparse
 
 import torch.nn.functional as F
 
-from RNNRepair.use_cases.image_classification.mnist_rnn_binary import RNN
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_torch import RNN
 from RNNRepair.use_cases.image_classification import MyNet
 
 

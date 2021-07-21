@@ -30,7 +30,7 @@ class AbstConstructor():
             # from use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
             # self.classifier = SSTClassifier(rnn_type='gru', save_dir=self.save_dir, epoch=self.epoch, train_default = False)
         # elif self.rnn_type == 'torch_lstm_bin':
-            # from use_cases.image_classification.mnist_rnn_binary import TorchMnistiClassifier
+            # from use_cases.image_classification.mnist_rnn_profile_torch import TorchMnistiClassifier
             #
             # self.classifier = TorchMnistiClassifier(rnn_type='lstm', save_dir=self.save_dir, epoch=self.epoch,
                                                # flip=0, first=4, second=9, ratio=0.3)

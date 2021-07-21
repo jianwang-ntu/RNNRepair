@@ -14,7 +14,7 @@ import time
 
 from RNNRepair.utils import calculate_similarity_list
 from RNNRepair.abstraction.feature_extraction import extract_feature
-from RNNRepair.use_cases.image_classification.mnist_rnn_binary import TorchMnistiClassifier
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_torch import TorchMnistiClassifier
 
 
 def inference_key(trace, trans_train_without, pred_results, pred, truth):

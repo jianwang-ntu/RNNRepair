@@ -423,7 +423,7 @@ class TorchMnistiClassifier(Profiling):
 
 
 if __name__ == "__main__":
-    classifier = TorchMnistiClassifier(rnn_type='lstm', save_dir='../../data/mnist_rnn_binary', flip=1,train_default=True, epoch=20)
+    classifier = TorchMnistiClassifier(rnn_type='lstm', save_dir='../../data/mnist_rnn_profile_torch', flip=1,train_default=True, epoch=20)
     # arr = np.random.choice(60000, 500, replace=False)
     # classifier.train(removed_idx=arr)
     # classifier.train()
