@@ -12,22 +12,23 @@ def check_mkdir(path):
 
 class Profiling(object):
     def __init__(self, save_dir):
-            
-        self.save_dir = save_dir
-        self.model_dir = os.path.join(save_dir, 'model')
-        self.con_trace_dir = os.path.join(save_dir, 'con_trace')
-        self.pca_dir = os.path.join(save_dir, 'pca_trace')
-        self.abst_dir = os.path.join(save_dir, 'abs_model')
-        self.gan_dir = os.path.join(save_dir, 'feature_data')
-        self.input_dir = os.path.join(save_dir, '_texts')
-
-        check_mkdir(self.model_dir)
-        check_mkdir(self.con_trace_dir)
-        check_mkdir(self.pca_dir)
-        check_mkdir(self.abst_dir)
-        check_mkdir(self.save_dir)
-        check_mkdir(self.input_dir)
-        check_mkdir(self.input_dir)
+        
+        if save_dir:
+            self.save_dir = save_dir
+            self.model_dir = os.path.join(save_dir, 'model')
+            self.con_trace_dir = os.path.join(save_dir, 'con_trace')
+            self.pca_dir = os.path.join(save_dir, 'pca_trace')
+            self.abst_dir = os.path.join(save_dir, 'abs_model')
+            self.gan_dir = os.path.join(save_dir, 'feature_data')
+            self.input_dir = os.path.join(save_dir, '_texts')
+    
+            check_mkdir(self.model_dir)
+            check_mkdir(self.con_trace_dir)
+            check_mkdir(self.pca_dir)
+            check_mkdir(self.abst_dir)
+            check_mkdir(self.save_dir)
+            check_mkdir(self.input_dir)
+            check_mkdir(self.input_dir)
 
     '''
         It is better to cache the profile data in the self.con_trace_dir

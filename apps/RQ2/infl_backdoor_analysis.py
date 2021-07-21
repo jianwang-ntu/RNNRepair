@@ -79,7 +79,8 @@ if __name__ == "__main__":
     parser.add_argument('-pca', default=10, type=int)
     parser.add_argument('-epoch', default=40, type=int)
     parser.add_argument('-components', default=37, type=int)
-    parser.add_argument('-data_dir')
+    # parser.add_argument('-data_dir',default="data")
+    parser.add_argument('-path',default="save")
     parser.add_argument('-round', default=1, type=int)
     parser.add_argument('-model', default='torch_gru_toxic',
                         choices=['keras_lstm_mnist', 'torch_lstm_imdb', 'torch_gru_toxic', 'torch_lstm_bin' , 'torch_gru_sst', ])
@@ -110,10 +111,10 @@ if __name__ == "__main__":
         np.random.seed(round)
 
         # Create backdoor data
-        data_path = os.path.join(args.data_dir,str(round), 'data')
-        bd_data_path = os.path.join(args.data_dir,str(round), 'data', 'bd.data')
+        data_path = os.path.join(args.path,str(round), 'data')
+        bd_data_path = os.path.join(args.path,str(round), 'data', 'bd.data')
 
-        save_path = os.path.join(args.data_dir, str(round), 'model')
+        save_path = os.path.join(args.path, str(round), 'model')
 
         if os.path.exists(bd_data_path):
             bd_train, ori_test, aug_test = joblib.load(bd_data_path)
@@ -277,7 +278,7 @@ if __name__ == "__main__":
 
 
 
-        fix_path = os.path.join(args.data_dir, str(round), 'fixed.data')
+        fix_path = os.path.join(args.path, str(round), 'fixed.data')
         if os.path.exists(fix_path):
             removed_num, infl_re, rdm_re,_,_ = joblib.load(fix_path)
         else:
@@ -301,7 +302,8 @@ if __name__ == "__main__":
                 # all_train = set(range(len(x_train)))
                 others_train = np.array(list(all_train_with_nips - removed))
 
-                other_train_select = np.random.choice(others_train, inf_num, replace=False)
+                # other_train_select = np.random.choice(others_train, inf_num, replace=False)
+                other_train_select = np.random.choice(others_train, inf_num, replace=True)
                 train_inference = create_train(x_train, list(removed))
                 train_others = create_train(x_train, other_train_select)
 
