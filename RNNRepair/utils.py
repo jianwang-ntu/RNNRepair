@@ -86,6 +86,12 @@ def get_project_root(path=None):
     if path is None:
         return os.path.join(os.path.dirname(__file__),"..","save")
     return path
+def get_project_dataroot(path=None):
+    """Returns project root folder."""
+    # return Path(__file__).parent
+    if path is None:
+        return os.path.join(os.path.dirname(__file__),"..","data")
+    return path
 
 def get_project_path(path=None,model_type=None):
     """Returns project root folder."""
@@ -95,8 +101,8 @@ def get_project_path(path=None,model_type=None):
     save_dir = get_project_root(path=path)
     return os.path.join(save_dir,model_type)
 
-toxic_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'toxic_data','data_list')
-sst_data_path = os.path.join(get_project_root(), 'use_cases', 'sentiment_analysis', 'sst_data','data_list')
+toxic_data_path = os.path.join(get_project_dataroot(),  'toxic_data','data_list')
+sst_data_path = os.path.join(get_project_dataroot(),  'sst_data','data_list')
 def save_image(save_dir,data_label,name):
     os.makedirs(save_dir, exist_ok=True)
 

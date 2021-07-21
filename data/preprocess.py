@@ -85,7 +85,10 @@ def start_data_filter():
     sys.path.append("../RNNRepair/use_cases/sentiment_analysis")
     from toxic_datasets import TOXIC
     
-    TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en_core_web_sm")
+    try :
+        TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en_core_web_sm")
+    except :
+        TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en")
     LABEL = data.LabelField(dtype=torch.float)
     
     

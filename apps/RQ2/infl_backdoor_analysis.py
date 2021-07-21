@@ -2,17 +2,19 @@ import os
 
 import sys
 import joblib
-
-sys.path.append("../../")
-from use_cases.sentiment_analysis.toxic_rnn_profile import TOXICClassifier
-from use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
-from use_cases.sentiment_analysis.imdb_rnn_profile import IMDBClassifier
 import argparse
 import random
 import copy
-from RNNRepair.abstraction.feature_extraction import extract_feature
 import numpy as np
 from random import randrange
+
+from RNNRepair.use_cases.sentiment_analysis.toxic_rnn_profile import TOXICClassifier
+from RNNRepair.use_cases.sentiment_analysis.sst_rnn_profile import SSTClassifier
+from RNNRepair.use_cases.sentiment_analysis.imdb_rnn_profile import IMDBClassifier
+from RNNRepair.abstraction.feature_extraction import extract_feature
+
+from RNNRepair.utils import toxic_data_path
+
 def generate_bd_data(train_lst, test_lst, inser_train_num):
 
     train_neg_index, test_pos_index = [], []
@@ -77,7 +79,7 @@ if __name__ == "__main__":
     parser.add_argument('-pca', default=10, type=int)
     parser.add_argument('-epoch', default=40, type=int)
     parser.add_argument('-components', default=37, type=int)
-    parser.add_argument('-path')
+    parser.add_argument('-data_dir')
     parser.add_argument('-round', default=1, type=int)
     parser.add_argument('-model', default='torch_gru_toxic',
                         choices=['keras_lstm_mnist', 'torch_lstm_imdb', 'torch_gru_toxic', 'torch_lstm_bin' , 'torch_gru_sst', ])
@@ -108,10 +110,10 @@ if __name__ == "__main__":
         np.random.seed(round)
 
         # Create backdoor data
-        data_path = os.path.join(args.path,str(round), 'data')
-        bd_data_path = os.path.join(args.path,str(round), 'data', 'bd.data')
+        data_path = os.path.join(args.data_dir,str(round), 'data')
+        bd_data_path = os.path.join(args.data_dir,str(round), 'data', 'bd.data')
 
-        save_path = os.path.join(args.path, str(round), 'model')
+        save_path = os.path.join(args.data_dir, str(round), 'model')
 
         if os.path.exists(bd_data_path):
             bd_train, ori_test, aug_test = joblib.load(bd_data_path)
@@ -119,7 +121,7 @@ if __name__ == "__main__":
             if args.model!="torch_gru_toxic":
                 raise Exception(f"cannot load the local dataset, only support the torch_gru_toxic, present is {args.model}")
             os.makedirs(data_path, exist_ok=True)
-            from utils import toxic_data_path
+
             train_lst = joblib.load(os.path.join(toxic_data_path, 'toxic_train.lst'))
             test_lst = joblib.load(os.path.join(toxic_data_path, 'toxic_test.lst'))
             bd_train, ori_test, aug_test = generate_bd_data(train_lst, test_lst, insert_train)
@@ -275,7 +277,7 @@ if __name__ == "__main__":
 
 
 
-        fix_path = os.path.join(args.path, str(round), 'fixed.data')
+        fix_path = os.path.join(args.data_dir, str(round), 'fixed.data')
         if os.path.exists(fix_path):
             removed_num, infl_re, rdm_re,_,_ = joblib.load(fix_path)
         else:

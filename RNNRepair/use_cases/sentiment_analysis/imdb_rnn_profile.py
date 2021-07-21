@@ -119,8 +119,10 @@ class IMDBClassifier(Profiling):
 
         self.model_path = os.path.join(self.model_dir, rnn_type + '_' + str(epoch) + '.ckpt')
 
-
-        self.TEXT = data.Field(tokenize='spacy', include_lengths=True , tokenizer_language="en_core_web_sm")
+        try:
+            self.TEXT = data.Field(tokenize='spacy', include_lengths=True , tokenizer_language="en_core_web_sm")
+        except :
+            self.TEXT = data.Field(tokenize='spacy', include_lengths=True , tokenizer_language="en")
         self.LABEL = data.LabelField(dtype=torch.float)
 
         print('Start split training and test data')

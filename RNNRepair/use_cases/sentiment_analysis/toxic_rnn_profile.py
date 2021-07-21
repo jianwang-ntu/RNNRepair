@@ -59,8 +59,11 @@ class TOXICClassifier(Profiling):
         if save_dir is not None:
             self.model_path = os.path.join(self.model_dir, rnn_type + '_' + str(epoch) + '.ckpt')
         self.sen_path = toxic_data_path if dataset_path is None else dataset_path
-
-        self.TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en_core_web_sm")
+        
+        try:
+            self.TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en_core_web_sm")
+        except :
+            self.TEXT = data.Field(tokenize='spacy', include_lengths=True, tokenizer_language="en_core_web_sm")
         self.LABEL = data.LabelField(dtype=torch.float)
 
         self.BATCH_SIZE = 256

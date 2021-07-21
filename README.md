@@ -6,10 +6,12 @@ This repository contains our model-based analysis framework for the NIPS submiss
 ## Usage
 ### Install
 ```
-#conda install pytorch torchvision  cudatoolkit=11.1 -c pytorch -c nvidia # cuda==11.1
-#conda install pytorch torchvision  cudatoolkit=10 -c pytorch  # cuda==10.1 
-#conda install -c pytorch torchtext=0.6.0
-#pip install tensorflow tensorflow_gpu
+## cuda==11.1
+conda install pytorch torchvision  cudatoolkit=11.1 -c pytorch -c nvidia 
+#conda install pytorch torchvision  cudatoolkit=10 -c pytorch  
+## cuda==10.1 
+conda install -c pytorch=1.8.0 torchtext=0.6.0
+pip install  tensorflow_gpu==2.5.0
 ```
 
 ```
@@ -45,34 +47,32 @@ The meanings of the options are:
 6. `-path` chooses the output path
 
 After the step 1, we will get one RNN model, several abstract models (i.e., automata) with different numnbers of components and the extracted features (for traning/test data) with the abstract models.
-It logs the information of the abstract models in `path_dir/data/keras_lstm_mnist/abs_model/10_10_s1_abst.log`
+It logs the information of the abstract models in `save/keras_lstm_mnist/abs_model/10_10_s1_abst.log`
 
 
 ```
 step-2 evaluate the accuracy:
-cd rnninfl/app/RQ1
-python train_features.py -pca 10 -epoch 15 -start 1 -end 10 -model keras_lstm_mnist -path path_dir
+python apps/RQ1/train_features.py -pca 10 -epoch 15 -start 1 -end 10 -model keras_lstm_mnist -path save
 ```
-`path_dir` is the path in step-1. After the step 2, we will get the SimNN accuracy in `path_dir/data/keras_lstm_mnist/abs_model/10_10_acc.log`
+`path_dir` is the path in step-1. After the step 2, we will get the SimNN accuracy in `save/keras_lstm_mnist/abs_model/10_10_acc.log`
 
 
 * plot refinement of PCA configurations（Section A.3.1, i.e., Figure 4 in paper）
 ```
-python  pltxyz.py path_dir/data/keras_lstm_mnist/abs_model/10_15_s1_abst.log  path_dir/data/keras_lstm_mnist/abs_model/10_15_acc.log  "k=10"
+python  apps/RQ1/pltxyz.py save/keras_lstm_mnist/abs_model/10_15_s1_abst.log  save/keras_lstm_mnist/abs_model/10_15_acc.log  "k=10"
 ```
 There is one pdf file generated in RQ1 directory.
 
 **To reproduce the similar results for RQ1, please set -end with 80, PCA with 3 , 10 for MNIST, 20 for IMDb and 10 for TOXIC.
 In the following expeirments, please select the better automaton which has m components (by setting -components m) 
-based on the stability values in path_dir/data/keras_lstm_mnist/abs_model/10_15_s1_abst.log.**
+based on the stability values in save/keras_lstm_mnist/abs_model/10_15_s1_abst.log.**
 
 ### For Section 4.1:
 Section 4.1: it will evaluate the accuracy with different features
 
 ```
 step-3
-cd rnninfl/app/RQ1
-python feature_comparision.py -pca 10 -epoch 15 -components 7 -model keras_lstm_mnist -path path_dir
+python apps/RQ1/feature_comparision.py -pca 10 -epoch 15 -components 7 -model keras_lstm_mnist -path save
 ```
 The meanings of the options are:
 
@@ -91,15 +91,13 @@ Section A.3.2: it will show the pattern for interpreting the faults with two ste
 
 ```
 step-1: calculate the metrics for failed inputs
-cd rnninfl/app/RQ1
-python fault_loc.py  -pca 10 -epoch 15 -components 7 -benign 0 -model keras_lstm_mnist -path path_dir
+python apps/RQ1/fault_loc.py  -pca 10 -epoch 15 -components 7 -benign 0 -model keras_lstm_mnist -path save
 ```
 
 
 ```
 step-2: calculate the metrics for benign inputs
-cd rnninfl/app/RQ1
-python fault_loc.py  -pca 10 -epoch 15 -components 7 -benign 1 -model keras_lstm_mnist -path path_dir
+python apps/RQ1/fault_loc.py  -pca 10 -epoch 15 -components 7 -benign 1 -model keras_lstm_mnist -path save
 ```
 
 The meanings of the options are:
@@ -111,11 +109,11 @@ The meanings of the options are:
 5. `-model` chooses the target model and dataset from `keras_lstm_mnist`, `torch_gru_imdb`, `torch_gru_toxic`,  `torch_gru_sst`
 6. `-path` chooses the output path, which should be the same with the setting in step-1
 
-It outputs the information in `path_dir/data/keras_lstm_mnist/abs_model/10_10_faults.log` and `path_dir/data/keras_lstm_mnist/abs_model/10_10_benign.log`  
+It outputs the information in `save/keras_lstm_mnist/abs_model/10_10_faults.log` and `save/keras_lstm_mnist/abs_model/10_10_benign.log`  
 
 * plot statistical results for understanding the benign/failed predictions 
 ```
-python pltxyz3.py path_dir/data/keras_lstm_mnist/abs_model/10_15_benign.log  path_dir/data/keras_lstm_mnist/abs_model/10_15_faults.log
+python apps/RQ1/pltxyz3.py save/keras_lstm_mnist/abs_model/10_15_benign.log  save/keras_lstm_mnist/abs_model/10_15_faults.log
 ```
 Three pdf files are generated i.e., metric1.pdf metric2.pdf and metric3.pdf.
 
@@ -129,7 +127,7 @@ In order to run experiments for Section 4.2, you need to finish following five s
 
 The all commands are integrated in **./app/RQ3/command.sh**. Running command:
 ```
-cd rnninfl/app/RQ3
+cd app/RQ3
 bash .command.sh
 ```
 The command.sh file contains the following steps:
@@ -152,8 +150,8 @@ Section 4.3: it will generates data for repairing the common failed inputs (from
 
 ```
 step-1: generates data 
-cd rnninfl/app/RQ4
-python data_gen.py  -pca 10  -components 7 -model keras_lstm_mnist -path path_dir
+# in app/RQ4
+python apps/RQ4/datagen.py  -pca 10  -epoch 15 -components 7 -model keras_lstm_mnist -path save
 ```
 
 The meanings of the options are:
@@ -165,32 +163,32 @@ The meanings of the options are:
 
 
 The parameters of `k` and model epoches `pca_models` can be changed in the source file.
-It will generates the data in `path_dir/data/keras_lstm_mnist/temp_files/`.
+It will generates the data in `save/keras_lstm_mnist/temp_files/`.
 
 **To reproduce the results for RQ4, you can train multiple models (e.g., 5,8,10,12,15,18) to obtain stable faults
 and generate the best automata for these models.
 However, it will spend much time. 
-We also included the generated data in the paper (see `rnninfl/app/RQ4/retrain.npz`), so you can just retrain the model
+We also included the generated data in the paper (see `app/RQ4/retrain.npz`), so you can just retrain the model
 with the following commands that take this npz file as input.**
 
 
 ```
 step-2:  retrain the model by adding the generated results
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 ```
 step-3:  get the results with  the original data
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 
 ```
 step-4:  get the results with  the random strategy
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 It will output the results in the stdout.
@@ -210,8 +208,8 @@ Section 4.4: it will repair the postive-to-negative errors by inserting  segment
 
 
 ```
-cd rnninfl/app/RQ4
-python segment_repair.py  -pca 10  -components 37 -epoch 40  -model torch_gru_toxic -path path_dir
+python apps/RQ4/segment_repair.py  -pca 10  -components 37 -epoch 15  -model torch_gru_toxic -path save
+
 ```
 
 The meanings of the options are:
@@ -226,27 +224,27 @@ The meanings of the options are:
 **To reproduce the results for RQ4, you can train multiple models (e.g., 5,8,10,12,15,18) to obtain stable faults
 and generate the best automata for these models.
 However, it will spend much time. 
-We also included the generated data in the paper (see `rnninfl/app/RQ4/retrain.npz`), so you can just retrain the model
+We also included the generated data in the paper (see `app/RQ4/retrain.npz`), so you can just retrain the model
 with the following commands that take this npz file as input.**
 
 
 ```
 step-2:  retrain the model by adding the generated results
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 ```
 step-3:  get the results with  the original data
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 
 ```
 step-4:  get the results with  the random strategy
-cd rnninfl/use_cases/image_classification
-python mnist_rnn_profile.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
 ```
 
 
@@ -257,8 +255,7 @@ Section B.5: it will show the backdoor attack and fix results with segment level
 
 
 ```
-cd rnninfl/app/RQ2
-python infl_backdoor_analysis.py  -pca 10 -epoch 40 -components 37 -round 1 -path path_dir
+python apps/RQ2/infl_backdoor_analysis.py  -pca 10 -epoch 40 -components 37 -round 1 -data_dir data
 ```
 
 
@@ -269,4 +266,4 @@ The meanings of the options are:
 2. `-epoch` determines the epoch for the target model. If the model does not exist, we will train one.
 3. `-components` the number of the components for the GMM generated from RQ1
 4. `-round` chooses how many seeds we want to run
-5. `-path` chooses the output path, which should be the same with the setting in step-1
+5. `-data_dir` chooses the output path, which should be the same with the setting in step-1
