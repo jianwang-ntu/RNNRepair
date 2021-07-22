@@ -232,33 +232,6 @@ The meanings of the options are:
 
 
 
-**To reproduce the results for RQ4, you can train multiple models (e.g., 5,8,10,12,15,18) to obtain stable faults
-and generate the best automata for these models.
-However, it will spend much time. 
-We also included the generated data in the paper (see `app/RQ4/retrain.npz`), so you can just retrain the model
-with the following commands that take this npz file as input.**
-
-
-```
-step-2:  retrain the model by adding the generated results
-
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
-```
-
-```
-step-3:  get the results with  the original data
-
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
-```
-
-
-```
-step-4:  get the results with  the random strategy
-
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
-```
-
-
 
 ### For Section B.5
 
