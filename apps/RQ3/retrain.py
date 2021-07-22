@@ -161,11 +161,12 @@ if __name__ == "__main__":
         
     for cur_seed in seeds:
         for key in all_results[cur_seed].keys():
-            avg_test_results[key] += np.array(all_test_results[cur_seed][key])
-            all_test[key].append(np.array(all_test_results[cur_seed][key]))
-        
-            avg_target_results[key] += np.array(all_target_results[cur_seed][key])    
-            all_target[key].append(np.array(all_target_results[cur_seed][key]))
+            if cur_seed in all_test_results and  key in  all_test_results[cur_seed] and  all_test_results[cur_seed][key]:
+                avg_test_results[key] += np.array(all_test_results[cur_seed][key])
+                all_test[key].append(np.array(all_test_results[cur_seed][key]))
+            
+                avg_target_results[key] += np.array(all_target_results[cur_seed][key])    
+                all_target[key].append(np.array(all_target_results[cur_seed][key]))
             
     for method in all_results[cur_seed].keys():
         avg_test_results[method] /= parts

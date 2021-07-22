@@ -12,13 +12,36 @@ sns.set_style("white")
 
 # python plot_results.py 1 7 2 0.3 30 1000 1010
 if __name__=="__main__":
-    flipfirst = int(sys.argv[1])#1
-    flipsecond = int(sys.argv[2])#7
-    flip_mode = int(sys.argv[3])#2
-    ratio = float(sys.argv[4])#0.3
-    epoch = int(sys.argv[5])#30
-    start_seed= int(sys.argv[6])#1000
-    end_seed = int(sys.argv[7])#1010
+    import argparse
+    parser = argparse.ArgumentParser(description='coverage guided fuzzing for DNN')
+    parser.add_argument('-save_dir', default="./save/", type=str)
+    
+    parser.add_argument('-epoch', default=30, type=int)
+    parser.add_argument('-flipfirst', default=1, type=int)
+    parser.add_argument('-flipsecond', default=7, type=int)
+    parser.add_argument('-flip', default=2, type = int)
+    parser.add_argument('-ratio', default=0.3, type=float)
+    parser.add_argument('-start_seed', default=1000, type=int)
+    parser.add_argument('-end_seed', default=1010, type=int)
+    
+    args = parser.parse_args()
+    save_dir =args.save_dir 
+
+    path = save_dir 
+    # flipfirst = int(sys.argv[1])#1
+    # flipsecond = int(sys.argv[2])#7
+    # flip_mode = int(sys.argv[3])#2
+    # ratio = float(sys.argv[4])#0.3
+    # epoch = int(sys.argv[5])#30
+    # start_seed= int(sys.argv[6])#1000
+    # end_seed = int(sys.argv[7])#1010
+    epoch= args.epoch
+    flipfirst = args.flipfirst
+    flipsecond = args.flipsecond
+    flip_mode = args.flip
+    ratio = args.ratio
+    start_seed = args.start_seed
+    end_seed = args.end_seed
 
     part = 20
     size = 1/part
@@ -31,20 +54,23 @@ if __name__=="__main__":
     seeds = np.arange(start_seed,end_seed)
     
     for cur_seed in seeds:
-        sgd_order = joblib.load("./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_sgd_at_epoch{}_00.dat".format(
-            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))[:,-1]
-        icml_order = joblib.load("./mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_icml_at_epoch{}_00.dat".format(
-            flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))
-        jcard_order = np.load("./dataflip_{}_{}_{}/jcard_order_{}_{}_{}_{}_{}.npy".format(
-            flipfirst,flipsecond,ratio,flipfirst,flipsecond,flip_mode,ratio,cur_seed))
+        sgd_order = joblib.load("{}/mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_sgd_at_epoch{}_00.dat".format(
+            save_dir,flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))[:,-1]
+        icml_order = joblib.load("{}/mnist_rnn_sgd_{}_{}_{}_{}/mnist_rnn_sgd_{:02d}/infl_icml_at_epoch{}_00.dat".format(
+            save_dir,flipfirst,flipsecond,flip_mode,ratio,cur_seed,epoch))
+        jcard_order = np.load("{}/dataflip_{}_{}_{}/jcard_order_{}_{}_{}_{}_{}.npy".format(
+            save_dir,flipfirst,flipsecond,ratio,flipfirst,flipsecond,flip_mode,ratio,cur_seed))
 
         random_order = np.arange(len(sgd_order))
         np.random.shuffle(random_order)
 
-        flip_file = "./dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
+        flip_file = "{}/dataflip_{}_{}_{}/torch_lstm_bin/{}_{}/model/flip{}_{}_{}.data".format(
+                save_dir,
                 flipfirst,flipsecond,ratio,cur_seed,flip_mode,flipfirst,flipsecond,flip_mode)
         (x_train, y_train), (x_test, y_test), flip_idx = joblib.load(flip_file)
-        real_flip_idx = np.load("./dataflip_{}_{}_{}/infl_flip_idx({}_{}_{}_{}_{}).npy".format(
+        real_flip_idx = np.load("{}/dataflip_{}_{}_{}/infl_flip_idx({}_{}_{}_{}_{}).npy".format(
+                            save_dir,
+
             flipfirst,flipsecond,ratio,flipfirst,flipsecond,flip_mode,ratio,cur_seed))
 
 
@@ -103,9 +129,10 @@ if __name__=="__main__":
     plot_2_data["Proposed"] = avg_infl_flips['jcard']
     
     
-    saved_results = joblib.load("dataflip_{}_{}_{}/retrain_results_{}_{}_{}_{}.dat".format(
+    saved_results = joblib.load("{}/dataflip_{}_{}_{}/retrain_results_{}_{}_{}_{}.dat".format(
+                        save_dir,
                 flipfirst,flipsecond,ratio,flipfirst,flipsecond,flip_mode,ratio))
-
+    print (list(saved_results),"key..saved_results")
     all_results = saved_results['all_results']
     all_target_results = saved_results['all_target_results']
     all_target =  saved_results['all_target']
@@ -135,8 +162,8 @@ if __name__=="__main__":
             plt.xlabel("Fraction of train data checked")
             plt.legend(loc=2)
 
-    plt.savefig("plot_{}_{}_{}.pdf".format(flipfirst,flipsecond,flip_mode),bbox_inches='tight',dpi=300)
-    print("save plot_{}_{}_{}.pdf successfully!".format(flipfirst,flipsecond,flip_mode))
+    plt.savefig("{}/plot_{}_{}_{}.pdf".format(                save_dir,flipfirst,flipsecond,flip_mode),bbox_inches='tight',dpi=300)
+    print("save {}/plot_{}_{}_{}.pdf successfully!".format(                save_dir,flipfirst,flipsecond,flip_mode))
             
     
     
