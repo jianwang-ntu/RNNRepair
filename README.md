@@ -255,7 +255,7 @@ Section B.5: it will show the backdoor attack and fix results with segment level
 
 
 ```
-python apps/RQ2/infl_backdoor_analysis.py  -pca 10 -epoch 40 -components 37 -round 1 -data_dir data
+python apps/RQ2/infl_backdoor_analysis.py  -pca 10 -epoch 40 -components 37 -round 1 -path save
 ```
 
 
@@ -266,4 +266,4 @@ The meanings of the options are:
 2. `-epoch` determines the epoch for the target model. If the model does not exist, we will train one.
 3. `-components` the number of the components for the GMM generated from RQ1
 4. `-round` chooses how many seeds we want to run
-5. `-data_dir` chooses the output path, which should be the same with the setting in step-1
+5. `-path` chooses the output path, which should be the same with the setting in step-1
