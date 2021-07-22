@@ -15,6 +15,8 @@ from tensorflow.keras.models import Model
 
 from RNNRepair.use_cases.image_classification.mutators import Mutators
 
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_keras import MnistClassifier
+
 if __name__ == "__main__":
     print('Repair by retraining')
 
@@ -45,9 +47,9 @@ if __name__ == "__main__":
     test_label = y_test[new_id]
 
     if args.rnn_type == 'lstm':
-        cur_classifier = MnistClassifier(rnn_type='lstm', save_dir='../../data/keras_lstm_mnist', epoch=15,save_period=0)
+        cur_classifier = MnistClassifier(rnn_type='lstm', save_dir='./save/keras_lstm_mnist', epoch=15,save_period=0)
     else:
-        cur_classifier = MnistClassifier(rnn_type='gru', save_dir='../../data/keras_gru_mnist', epoch=15,save_period=0)
+        cur_classifier = MnistClassifier(rnn_type='gru', save_dir='./save/keras_gru_mnist', epoch=15,save_period=0)
 
     seed = args.seed
 

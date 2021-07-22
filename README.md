@@ -20,6 +20,17 @@ python -m spacy download en
 pip install -e ./
 ```
 
+* All command line have tested on this env
+
+|   installed    | Version |
+| ----------- | ----------- |
+| pytorch      | 1.8.1       |
+| tensorflow   | 2.5.0        |
+| torchvision   | 0.9.1        |
+| torchtext   | 0.6.0        |
+| spacy | 3.1.0 |
+|nltk|3.6.2 | 
+
 
 **Note that the results depend on the precision of the automata. 
 In the example, we just randomly set some parameters (e.g., we set the gmm with 7 components for a quick run of the program), 
@@ -168,27 +179,27 @@ It will generates the data in `save/keras_lstm_mnist/temp_files/`.
 **To reproduce the results for RQ4, you can train multiple models (e.g., 5,8,10,12,15,18) to obtain stable faults
 and generate the best automata for these models.
 However, it will spend much time. 
-We also included the generated data in the paper (see `app/RQ4/retrain.npz`), so you can just retrain the model
+We also included the generated data in the paper (see `apps/RQ4/retrain.npz`), so you can just retrain the model
 with the following commands that take this npz file as input.**
 
 
 ```
 step-2:  retrain the model by adding the generated results
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 ```
 step-3:  get the results with  the original data
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 
 ```
 step-4:  get the results with  the random strategy
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 It will output the results in the stdout.
@@ -199,7 +210,7 @@ The meanings of the options are:
 2. `-type` determines whether we add the generated data, 0 for using the new data and 1 for using the original data
 3. `-p` the path of the new generated data
 4. `-start` the starting epoch for the retraining.
-5. `-model_type` chooses the target model type from `lstm`, `gru`.
+5. `-rnn_type` chooses the target model type from `lstm`, `gru`.
 6. `-seed` determines the repeat times. 
 
 
@@ -231,20 +242,20 @@ with the following commands that take this npz file as input.**
 ```
 step-2:  retrain the model by adding the generated results
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 0 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 ```
 step-3:  get the results with  the original data
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 1 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 
 ```
 step-4:  get the results with  the random strategy
 
-python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ../../app/RQ4/retrain.npz -start 5 -model_type lstm -seed 5
+python apps/RQ4/repair_mnist_rnn_keras.py -epoch 15 -type 2 -p  ./apps/RQ4/retrain.npz -start 5 -rnn_type lstm -seed 5
 ```
 
 

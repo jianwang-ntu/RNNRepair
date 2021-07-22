@@ -14,6 +14,8 @@ from RNNRepair.use_cases import create_classifer
 from RNNRepair.abstraction.feature_extraction import extract_feature
 from RNNRepair.use_cases.image_classification.mutators import Mutators
 
+from RNNRepair.use_cases.image_classification.mnist_rnn_profile_keras import MnistClassifier
+
 import joblib
 
 
@@ -138,7 +140,6 @@ if __name__ == "__main__":
 
     save_dir = classifier.save_dir
 
-    from RNNRepair.use_cases.image_classification.mnist_rnn_profile import MnistClassifier
 
     retrain_id = failed_test_indexes
     retrain_img = []
