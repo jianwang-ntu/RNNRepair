@@ -251,3 +251,27 @@ The meanings of the options are:
 3. `-components` the number of the components for the GMM generated from RQ1
 4. `-round` chooses how many seeds we want to run
 5. `-path` chooses the output path, which should be the same with the setting in step-1
+
+
+# Citation
+
+```
+
+@InProceedings{pmlr-v139-xie21b,
+  title = 	 {RNNRepair: Automatic RNN Repair via Model-based Analysis},
+  author =       {Xie, Xiaofei and Guo, Wenbo and Ma, Lei and Le, Wei and Wang, Jian and Zhou, Lingjun and Liu, Yang and Xing, Xinyu},
+  booktitle = 	 {Proceedings of the 38th International Conference on Machine Learning},
+  pages = 	 {11383--11392},
+  year = 	 {2021},
+  editor = 	 {Meila, Marina and Zhang, Tong},
+  volume = 	 {139},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {18--24 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v139/xie21b/xie21b.pdf},
+  url = 	 {https://proceedings.mlr.press/v139/xie21b.html},
+  abstract = 	 {Deep neural networks are vulnerable to adversarial attacks. Due to their black-box nature, it is rather challenging to interpret and properly repair these incorrect behaviors. This paper focuses on interpreting and repairing the incorrect behaviors of Recurrent Neural Networks (RNNs). We propose a lightweight model-based approach (RNNRepair) to help understand and repair incorrect behaviors of an RNN. Specifically, we build an influence model to characterize the stateful and statistical behaviors of an RNN over all the training data and to perform the influence analysis for the errors. Compared with the existing techniques on influence function, our method can efficiently estimate the influence of existing or newly added training samples for a given prediction at both sample level and segmentation level. Our empirical evaluation shows that the proposed influence model is able to extract accurate and understandable features. Based on the influence model, our proposed technique could effectively infer the influential instances from not only an entire testing sequence but also a segment within that sequence. Moreover, with the sample-level and segment-level influence relations, RNNRepair could further remediate two types of incorrect predictions at the sample level and segment level.}
+}
+
+```
+
